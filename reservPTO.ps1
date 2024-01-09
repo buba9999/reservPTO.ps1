@@ -2,36 +2,36 @@ $sourceFolder = "z:\PTO"
 $destinationFolder = "F:\PTO"
 
 
-# Проверяем, существует ли папка исходных файлов
+# РџСЂРѕРІРµСЂСЏРµРј, СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё РїР°РїРєР° РёСЃС…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ
 if (!(Test-Path $sourceFolder)) {
-    Write-Host "Папка исходных файлов не найдена."
+    Write-Host "РџР°РїРєР° РёСЃС…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ РЅРµ РЅР°Р№РґРµРЅР°."
     exit
 }
 
-# Проверяем, существует ли папка назначения. Если нет, создаем ее
+# РџСЂРѕРІРµСЂСЏРµРј, СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё РїР°РїРєР° РЅР°Р·РЅР°С‡РµРЅРёСЏ. Р•СЃР»Рё РЅРµС‚, СЃРѕР·РґР°РµРј РµРµ
 if (!(Test-Path $destinationFolder)) {
     New-Item -ItemType Directory -Force -Path $destinationFolder | Out-Null
 }
 
-# Функция для рекурсивного копирования файлов и папок с использованием robocopy
+# Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЂРµРєСѓСЂСЃРёРІРЅРѕРіРѕ РєРѕРїРёСЂРѕРІР°РЅРёСЏ С„Р°Р№Р»РѕРІ Рё РїР°РїРѕРє СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј robocopy
 function Copy-ItemsRecursively($source, $destination) {
     $robocopyOptions = "/E /PURGE /R:1 /W:1 /NP /NFL /NDL /NJH /NJS /NS /NC /LOG+:robocopy.log /XF ~*"
 
     $robocopyCommand = "robocopy `"$source`" `"$destination`" $robocopyOptions"
-    Write-Host "Запуск robocopy: $robocopyCommand"
+    Write-Host "Р—Р°РїСѓСЃРє robocopy: $robocopyCommand"
     Invoke-Expression $robocopyCommand
 }
 
-# Копируем файлы и папки из папки исходных файлов в папку назначения с использованием robocopy
-Write-Host "Начало копирования файлов и папок..."
+# РљРѕРїРёСЂСѓРµРј С„Р°Р№Р»С‹ Рё РїР°РїРєРё РёР· РїР°РїРєРё РёСЃС…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ РІ РїР°РїРєСѓ РЅР°Р·РЅР°С‡РµРЅРёСЏ СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј robocopy
+Write-Host "РќР°С‡Р°Р»Рѕ РєРѕРїРёСЂРѕРІР°РЅРёСЏ С„Р°Р№Р»РѕРІ Рё РїР°РїРѕРє..."
 try {
     Copy-ItemsRecursively $sourceFolder $destinationFolder
 } catch {
     $errorMessage = $_.Exception.Message
     if ($errorMessage -match "Access to the path") {
-        Write-Host "Ошибка доступа к файлу: $errorMessage"
+        Write-Host "РћС€РёР±РєР° РґРѕСЃС‚СѓРїР° Рє С„Р°Р№Р»Сѓ: $errorMessage"
     } else {
         throw
     }
 }
-Write-Host "Копирование файлов и папок завершено."
+Write-Host "РљРѕРїРёСЂРѕРІР°РЅРёРµ С„Р°Р№Р»РѕРІ Рё РїР°РїРѕРє Р·Р°РІРµСЂС€РµРЅРѕ."
